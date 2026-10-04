@@ -1,0 +1,158 @@
+/* Tip cards: 4 columns on desktop, 2 on tablet, 1 on mobile */
+.cyberday__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+}
+.cyberday__grid > li { display: flex; }
+.cyberday__grid > li > .card { flex: 1; }
+
+@media (max-width: 1023px) {
+  .cyberday__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 767px) {
+  .cyberday__grid { grid-template-columns: 1fr; }
+}
+
+/* ----- Safety-tip cards (photo on top, teal accent bar on the title, joined borders) ----- */
+.cyberday .section-title { max-width: none; }
+.cyberday .section-title h2 {
+  font-family: var(--font-open);
+  font-stretch: 75%;            /* condensed, like the reference heading */
+  font-weight: 700;
+  color: #333;
+}
+
+.cyberday__grid { gap: 0; }
+
+.card--tip {
+  gap: 0;
+  background: var(--color-white);
+  border: 1px solid #dfe3f3;
+  margin-left: -1px; /* neighbouring cards share one border line */
+  font-family: var(--font-open);
+}
+.card--tip .card__media { aspect-ratio: 16 / 9; }
+.card--tip .card__body { padding: 1.5rem 1.5rem 0; gap: 1.125rem; }
+.card--tip .card__title {
+  margin-left: -1.5rem;        /* pull the accent bar to the card edge */
+  padding-left: 1.5rem;
+  border-left: 4px solid #6fd8d3;
+  font-family: var(--font-open);
+  font-size: clamp(1.25rem, 1.05rem + 0.5vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--color-primary);
+}
+.card--tip .card__description { font-size: 1.0625rem; line-height: 1.55; color: #333; }
+.card--tip .card__cta {
+  gap: 0.75rem;
+  padding: 1.5rem;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: #2a3bc9;
+}
+.card--tip .card__cta svg { display: none; }
+.card--tip .card__cta::after {   /* small chevron instead of the arrow icon */
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.2s;
+}
+.card--linked.card--tip:hover .card__cta::after { transform: translateX(4px) rotate(45deg); }
+.card--tip:hover { border-color: #2a3bc9; z-index: 1; }
+
+/* Two columns / one column: separate cards with a gap instead of joined borders */
+@media (max-width: 1023px) {
+  .cyberday__grid { gap: var(--space-md); }
+  .card--tip { margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card--tip .card__cta::after { transition: none; }
+}
+
+/* ----- "Ten years" highlight: blue box overlapping a wide banner photo ----- */
+/* Spacing: 48px between the cards, the box and the next section */
+.section.cyberday { padding-bottom: 3rem; }
+.section.cyberday-stat { padding-top: 0; padding-bottom: 3rem; }
+
+.cyberday-stat__inner {
+  display: grid;
+  grid-template-columns: 48.8% 1fr;
+  grid-template-rows: 4rem auto; /* the box starts 64px above the photo */
+}
+
+.cyberday-stat__content {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: start;
+  z-index: 1;
+  min-width: 0;
+  padding: 2rem;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-family: var(--font-open);
+}
+.cyberday-stat__title {
+  margin: 0 0 1rem;
+  font-family: var(--font-open);
+  font-size: clamp(1.75rem, 1.2rem + 1.5vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-white);
+}
+.cyberday-stat__text {
+  max-width: none;
+  margin: 0 0 1.5rem;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: var(--color-white);
+}
+.cyberday-stat__content .btn {
+  min-height: 48px;
+  padding: 0.75rem 2rem;
+  border-radius: 999px;
+  background: var(--color-white);
+  color: #2a3bc9;
+  font-family: var(--font-open);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.cyberday-stat__content .btn:hover { background: #e8ecfb; color: #1f2ea8; }
+.cyberday-stat__content :focus-visible { outline-color: var(--color-white); }
+
+.cyberday-stat__media {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  align-self: end;
+  min-width: 0;
+  aspect-ratio: 4.8 / 1;
+  overflow: hidden;
+  background: #2a4fc4;
+}
+.cyberday-stat__image,
+.cyberday-stat__placeholder { display: block; width: 100%; height: 100%; }
+.cyberday-stat__image { object-fit: cover; object-position: center 22%; } /* keeps the monitor and her head in the visible slice */
+.cyberday-stat__placeholder { background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); }
+
+/* Tablet: wider box, taller photo */
+@media (max-width: 1023px) {
+  .cyberday-stat__inner { grid-template-columns: 62% 1fr; }
+  .cyberday-stat__media { aspect-ratio: 3 / 1; }
+}
+
+/* Mobile: photo on top, blue box underneath (no overlap) */
+@media (max-width: 767px) {
+  .section.cyberday { padding-bottom: 2.5rem; }
+  .section.cyberday-stat { padding-bottom: 2.5rem; }
+  .cyberday-stat__inner { grid-template-columns: 1fr; grid-template-rows: auto auto; }
+  .cyberday-stat__media { grid-column: 1; grid-row: 1; aspect-ratio: 16 / 9; object-position: right; }
+  .cyberday-stat__image { object-position: 62% 22%; }
+  .cyberday-stat__content { grid-column: 1; grid-row: 2; align-self: stretch; padding: 1.5rem 1.25rem 2rem; }
+}

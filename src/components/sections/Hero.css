@@ -1,0 +1,260 @@
+/* Full-width hero (desktop first, >= 1024px).
+   Blue panel on the left is the section background; the photo sits in the right ~56%
+   and a gradient on top of the photo melts its left edge into that blue.
+   Slides crossfade (photo + text); the blue never moves. Only the photo drifts, very slowly.
+   Tablet and mobile overrides are at the bottom. */
+
+.hero {
+  --hero-blue: #00338d;
+  --hero-blue-mid: 0, 51, 141; /* rgb parts of the blue, for the transparent steps of the gradient */
+  --hero-fade: 900ms;
+
+  /* Cinematic drift of the photo (desktop). Smaller values = subtler.
+     The shift is always smaller than half the zoom, so the photo's edges never show. */
+  --hero-zoom-from: 1.03;
+  --hero-zoom-to: 1.06;
+  --hero-shift-x: -1%;
+  --hero-shift-y: -0.4%;
+  --hero-motion-duration: 14s;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--hero-blue);
+  color: var(--color-white);
+}
+
+/* ----- Photo (right) ----- */
+.hero__media {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 56%;
+  z-index: 0;
+}
+.hero__layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--hero-fade) ease-in-out;
+}
+.hero__layer--active { opacity: 1; }
+
+/* Clips the moving photo to the media area */
+.hero-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.hero-image,
+.hero-video,
+.hero__placeholder {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.hero__placeholder { background: linear-gradient(135deg, #1238be, var(--color-accent)); }
+
+/* Video slide: fills the media area like a photo. Its own motion replaces the drift below. */
+.hero-video { background: var(--hero-blue); object-position: 85% center; }
+
+/* Slow cinematic drift: only the photo moves, never the blue panel or the text.
+   transform + opacity only, so it runs on the GPU with no layout work. */
+.hero-image {
+  transform-origin: center center;
+  will-change: transform;
+  animation: heroImageMotion var(--hero-motion-duration) ease-in-out infinite;
+}
+/* A slide that is faded out holds its frame (no jump while it fades) and resumes when it returns */
+.hero__layer:not(.hero__layer--active) .hero-image { animation-play-state: paused; }
+
+@keyframes heroImageMotion {
+  0%,
+  100% { transform: scale(var(--hero-zoom-from)) translate3d(0, 0, 0); }
+  50% { transform: scale(var(--hero-zoom-to)) translate3d(var(--hero-shift-x), var(--hero-shift-y), 0); }
+}
+
+/* Blue -> image transition: solid at the photo's left edge, gone by about a third across */
+.hero__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    var(--hero-blue) 0%,
+    rgba(var(--hero-blue-mid), 0.88) 10%,
+    rgba(var(--hero-blue-mid), 0.5) 20%,
+    rgba(var(--hero-blue-mid), 0.18) 28%,
+    rgba(var(--hero-blue-mid), 0) 36%
+  );
+}
+
+/* ----- Text ----- */
+.hero__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  min-height: clamp(28rem, 33vw, 31rem); /* ~450-500px on desktop */
+}
+
+.hero__slides {
+  display: grid; /* every slide occupies the same cell */
+  width: 100%;
+  max-width: 31.25rem; /* ~500px */
+}
+
+.hero__content {
+  grid-area: 1 / 1;
+  align-self: center;
+  min-width: 0;
+  padding-block: var(--space-xl);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--hero-fade) ease-in-out, visibility 0s linear var(--hero-fade);
+}
+.hero__content--active {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--hero-fade) ease-in-out, visibility 0s;
+}
+
+.hero__title {
+  margin: 0 0 var(--space-sm);
+  font-family: var(--font-open);
+  font-stretch: 75%;               /* condensed Open Sans, like the reference */
+  font-size: clamp(2.25rem, 1.6rem + 1.6vw, 3rem); /* 36px -> 48px */
+  font-weight: 700;
+  line-height: 1.1;
+  overflow-wrap: break-word;
+}
+
+.hero__description {
+  max-width: 28rem;
+  margin: 0 0 var(--space-md);
+  font-family: var(--font-open);
+  font-size: clamp(1.125rem, 1rem + 0.35vw, 1.25rem); /* 18px -> 20px */
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* White pill button */
+.hero .btn {
+  min-height: 48px;
+  padding: 0.75rem 2rem;
+  border-radius: 999px;
+  background: var(--color-white);
+  color: #2a3bc9;
+  font-family: var(--font-open);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.hero .btn:hover { background: #e8ecfb; color: #1f2ea8; }
+
+/* The default focus ring is dark blue, which disappears on this background */
+.hero :focus-visible { outline-color: var(--color-white); }
+
+/* ----- Slide dots (small, quiet) ----- */
+.hero__dots {
+  position: absolute;
+  left: var(--container-padding);
+  bottom: 1.25rem;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.hero__dot {
+  position: relative;
+  width: 32px;
+  height: 24px;       /* comfortable hit area; the visible bar is drawn below */
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.hero__dot::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  top: 50%;
+  height: 3px;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.4);
+  transition: background-color 0.3s;
+}
+.hero__dot:hover::before,
+.hero__dot--active::before { background: var(--color-white); }
+
+/* ----- Tablet: 768px - 1023px ----- */
+@media (max-width: 1023px) {
+  .hero {
+    --hero-zoom-from: 1.02;
+    --hero-zoom-to: 1.045;
+    --hero-shift-x: -0.7%;
+    --hero-shift-y: -0.3%;
+  }
+  .hero__media { width: 62%; }
+  .hero__inner { min-height: 26rem; }
+  .hero__slides { max-width: 22rem; }
+  .hero__content { padding-block: var(--space-lg); }
+  .hero__title { font-size: clamp(2rem, 1.2rem + 2vw, 2.5rem); }
+}
+
+/* ----- Mobile: below 768px. Photo on top fading down into the blue, text below ----- */
+@media (max-width: 767px) {
+  .hero {
+    display: flex;
+    flex-direction: column;
+    /* Mobile: a barely-there zoom, no sideways drift, so the subjects stay in frame */
+    --hero-zoom-from: 1.02;
+    --hero-zoom-to: 1.035;
+    --hero-shift-x: 0%;
+    --hero-shift-y: 0%;
+  }
+  .hero__media {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+  }
+  .hero__media::after {
+    background: linear-gradient(
+      180deg,
+      rgba(var(--hero-blue-mid), 0) 55%,
+      rgba(var(--hero-blue-mid), 0.55) 80%,
+      var(--hero-blue) 100%
+    );
+  }
+  .hero__inner { display: block; min-height: 0; padding-top: 0.5rem; padding-bottom: 3rem; }
+  .hero-image, .hero__placeholder { object-position: 78% center; } /* keep the subjects (right side) in frame */
+  .hero-video { object-position: 68% center; }
+  .hero__slides { max-width: none; }
+  .hero__content { padding-block: 0; }
+  .hero__title { font-size: 2.25rem; }
+  .hero__description { margin-bottom: var(--space-md); }
+  .hero__dots { bottom: 0.75rem; }
+}
+
+@media (max-width: 400px) {
+  .hero__media { aspect-ratio: 1 / 1; }
+}
+
+/* Reduced motion: no autoplay (see useSlideshow), a static photo, and any manual change is instant */
+@media (prefers-reduced-motion: reduce) {
+  .hero-image {
+    animation: none;
+    transform: none;
+    will-change: auto;
+  }
+  .hero__layer,
+  .hero__content,
+  .hero__content--active,
+  .hero__dot::before { transition: none; }
+}

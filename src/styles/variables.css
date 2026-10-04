@@ -1,0 +1,35 @@
+:root {
+  /* Colors */
+  --color-primary: #00338d;
+  --color-primary-dark: #002266;
+  --color-accent: #0091da;
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-text: #1e1e1e;
+  --color-muted: #5f6368;
+  --color-bg: #ffffff;
+  --color-bg-alt: #f3f5f9;
+  --color-bg-soft: #f5f6fa; /* background behind the promo bands */
+  --color-cobalt: #1e49e2; /* bright blue panel (subscribe band) */
+  --color-border: #dde1e8;
+  --color-error: #b3261e;
+
+  /* Typography */
+  --font-base: Arial, Helvetica, sans-serif;
+  --font-open: 'Open Sans', Arial, Helvetica, sans-serif; /* hero text; loaded in index.html */
+
+  /* Spacing scale */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 4rem;
+  --space-2xl: 6rem;
+
+  /* Layout */
+  --container-width: 1280px;
+  --container-padding: 2.5rem; /* reduced at smaller breakpoints in responsive.css */
+  --header-height: 72px;
+  --utility-height: 40px; /* thin strip above the main bar; scrolls away */
+  --radius: 4px;
+}

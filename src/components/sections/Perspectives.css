@@ -1,0 +1,21 @@
+/* 3 columns on desktop, 2 on tablet, 1 on mobile */
+.perspectives__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+}
+.perspectives__grid > li { display: flex; }
+.perspectives__grid > li > .card { flex: 1; min-height: 16rem; }
+
+@media (max-width: 1023px) {
+  .perspectives__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 767px) {
+  .perspectives__grid { grid-template-columns: 1fr; }
+  .perspectives__grid > li > .card { min-height: 0; }
+}
+
+/* Dark blue band behind the whole section (cards stay white) */
+.section.perspectives { background: #00338d; }
+.perspectives .section-title h2 { color: var(--color-white); } /* heading must be light to stay readable */

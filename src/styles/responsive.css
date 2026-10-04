@@ -1,0 +1,33 @@
+/* ---------- Header & container ----------
+   Desktop >= 1024px (base styles) | Tablet 768-1023px | Mobile < 768px.
+   Below 1024px the six mega-menu items no longer fit, so the hamburger menu takes over. */
+
+@media (max-width: 1199px) {
+  .navbar__inner { gap: var(--space-sm); }
+  .navbar__nav { margin-left: var(--space-sm); }
+  .main-nav { gap: var(--space-sm); }
+  .main-nav__link { font-size: 0.875rem; }
+}
+
+@media (max-width: 1023px) {
+  :root { --container-padding: 1.5rem; }
+  .navbar__nav { display: none; }
+  .navbar__menu-button { display: inline-flex; }
+  .megamenu { display: none; }
+  .navbar__search-label { display: none; } /* the "Search" text only fits on wide screens */
+}
+
+@media (max-width: 767px) {
+  :root {
+    --container-padding: 1rem;
+    --header-height: 64px;
+    --utility-height: 0px;
+  }
+  .utility-bar { display: none; }
+  .navbar__search-button { margin-left: auto; }
+  .logo__img { height: 38px; }
+}
+
+@media (min-width: 1024px) {
+  .mobile-menu { display: none; }
+}
